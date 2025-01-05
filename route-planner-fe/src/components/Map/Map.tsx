@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { runAStar, simulateTrafficDelay } from "../../utils/calculateBestRoute";
+import { runAStar } from "../../utils/calculateBestRoute";
 
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY; // Your Mapbox API Key
 mapboxgl.accessToken = apiKey;
@@ -74,13 +74,13 @@ export const Map: React.FC = () => {
       // Draw traffic data on the map
       // Parse the graph from route data for A* (best route)
       const graph = parseRouteData(data);
-      const { routeNodes } = runAStar(graph, "step_0", `step_${graph.nodes.length - 1}`);
+      const { routeNodes } = runAStar(graph as any, "step_0", `step_${graph.nodes.length - 1}`, true);
       console.log("Best route (A*):", routeNodes);
 
       // Draw the best route in red
       drawBestRouteInRed(data.routes, routeNodes);
       // Draw the rest of the routes in blue
-      drawOtherRoutesInBlue(data.routes, routeNodes);
+      drawOtherRoutesInBlue(data.routes);
     } catch (error) {
       console.error("Error fetching routes:", error);
     }
@@ -116,7 +116,7 @@ export const Map: React.FC = () => {
     if (map) {
       map.addSource("best-route", {
         type: "geojson",
-        data: bestRouteGeoJSON,
+        data: bestRouteGeoJSON as any,
       });
 
       map.addLayer({
@@ -131,7 +131,7 @@ export const Map: React.FC = () => {
     }
   };
 
-  const drawOtherRoutesInBlue = (routes: any[], bestRouteNodes: string[]) => {
+  const drawOtherRoutesInBlue = (routes: any[]) => {
     const allOtherRoutesCoordinates: [number, number][][] = [];
 
     routes.forEach((route, routeIndex) => {
@@ -168,7 +168,7 @@ export const Map: React.FC = () => {
     if (map) {
       map.addSource("other-routes", {
         type: "geojson",
-        data: otherRoutesGeoJSON,
+        data: otherRoutesGeoJSON as any,
       });
 
       map.addLayer({

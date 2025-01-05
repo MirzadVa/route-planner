@@ -50,7 +50,7 @@ export const runAStar = (
   });
 
   gScore[startNode] = 0;
-  fScore[startNode] = calculateTrafficAdjustedHeuristic(startNode, goalNode, isBestRoute); // Use traffic-adjusted heuristic
+  fScore[startNode] = calculateTrafficAdjustedHeuristic(startNode as any, goalNode as any, isBestRoute); // Use traffic-adjusted heuristic
 
   while (openSet.size > 0) {
     // Get the node with the lowest fScore in the open set
@@ -59,7 +59,7 @@ export const runAStar = (
     // If we reached the goal, reconstruct the path
     if (currentNode === goalNode) {
       const routeNodes: string[] = [];
-      let current = goalNode;
+      let current: string | null = goalNode;
 
       while (current) {
         routeNodes.unshift(current);
@@ -85,7 +85,8 @@ export const runAStar = (
         // This path is better, record it
         cameFrom[neighbor] = currentNode;
         gScore[neighbor] = tentativeGScore;
-        fScore[neighbor] = gScore[neighbor] + calculateTrafficAdjustedHeuristic(neighbor, goalNode, isBestRoute); // Add traffic heuristic
+        fScore[neighbor] =
+          gScore[neighbor] + calculateTrafficAdjustedHeuristic(neighbor as any, goalNode as any, isBestRoute); // Add traffic heuristic
 
         if (!openSet.has(neighbor)) {
           openSet.add(neighbor);
